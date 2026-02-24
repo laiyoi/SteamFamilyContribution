@@ -15,11 +15,6 @@
 
   <ItemGroup>
     <Compile Remove="Samples\**" />
-    <Compile Remove="TestPriceService.cs" />
-    <Compile Remove="TestPriceServiceStandalone.cs" />
-    <Compile Remove="TestProtobuf.cs" />
-    <EmbeddedResource Remove="Samples\**" />
-    <None Remove="Samples\**" />
   </ItemGroup>
 
 </Project>

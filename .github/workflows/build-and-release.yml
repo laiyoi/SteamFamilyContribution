@@ -5,16 +5,19 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
 
@@ -34,23 +37,16 @@ jobs:
         Copy-Item -Path ./README.md -Destination ./release/
         Compress-Archive -Path ./release/* -DestinationPath ./SteamContribution.zip
 
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "tag=${GITHUB_REF#refs/tags/}" >> $env:GITHUB_OUTPUT
+
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.extract_tag.outputs.tag }}
+        name: Release ${{ steps.extract_tag.outputs.tag }}
         draft: false
         prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SteamContribution.zip
-        asset_name: SteamContribution.zip
-        asset_content_type: application/zip
+        files: ./SteamContribution.zip

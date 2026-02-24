@@ -6,7 +6,6 @@ public class SteamConfig
 {
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
-    public string ApiKey { get; set; } = "";
     public string CountryCode { get; set; } = "CN"; // 默认国家代码为中国
     // 注意：AuthCode 和 TwoFactorCode 是一次性验证码，不应保存到配置文件
 }
@@ -83,7 +82,6 @@ public class ConfigManager
         {
             Username = "your_steam_username",
             Password = "your_steam_password",
-            ApiKey = "your_steam_web_api_key",
             CountryCode = "CN"
         };
 

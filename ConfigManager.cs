@@ -7,6 +7,9 @@ public class SteamConfig
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
     public string CountryCode { get; set; } = "CN"; // 默认国家代码为中国
+    public string AccessToken { get; set; } = "";
+    public string RefreshToken { get; set; } = "";
+    public string GuardData { get; set; } = "";
     // 注意：AuthCode 和 TwoFactorCode 是一次性验证码，不应保存到配置文件
 }
 
@@ -51,6 +54,13 @@ public class ConfigManager
     {
         try
         {
+            // 确保配置文件所在目录存在
+            var configDir = Path.GetDirectoryName(ConfigPath);
+            if (!string.IsNullOrEmpty(configDir) && !Directory.Exists(configDir))
+            {
+                Directory.CreateDirectory(configDir);
+            }
+
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -60,8 +70,9 @@ public class ConfigManager
             var json = JsonSerializer.Serialize(config, options);
             File.WriteAllText(ConfigPath, json);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"[Config] ✗ 保存配置文件失败：{ex.Message}");
         }
     }
 

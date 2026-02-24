@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using SteamContribution;
+﻿﻿using SteamContribution;
 using System.Text.Json;
 
 // 首次运行时检查配置文件
@@ -128,8 +128,53 @@ async Task RunAsync()
                 return;
             }
 
-            // 登录 Steam
-            success = await clientManager.LoginAsync(username, password, guardData);
+            // 循环处理登录，直到成功或用户取消
+            int loginAttempts = 0;
+            const int maxAttempts = 3;
+            success = false;
+            
+            while (loginAttempts < maxAttempts)
+            {
+                try
+                {
+                    // 每次尝试登录前重新初始化客户端管理器
+                    clientManager = new SteamClientManager();
+                    
+                    // 登录 Steam
+                    success = await clientManager.LoginAsync(username, password, guardData);
+                    
+                    // 如果登录成功，保存新的用户名和密码到配置文件
+                    if (success)
+                    {
+                        var updatedConfig = ConfigManager.LoadConfig() ?? new SteamConfig();
+                        updatedConfig.Username = username;
+                        updatedConfig.Password = password;
+                        ConfigManager.SaveConfig(updatedConfig);
+                        Console.WriteLine("[Config] ✓ 用户名和密码已保存到配置文件");
+                        break;
+                    }
+                }
+                catch (Exception ex) when (ex.Message.Contains("InvalidPassword"))
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("[Error] 密码错误，请重新输入！");
+                    Console.WriteLine();
+                    
+                    // 提示用户重新输入密码
+                    Console.Write("请输入 Steam 密码：");
+                    password = ReadPassword();
+                    Console.WriteLine();
+                    
+                    loginAttempts++;
+                    
+                    if (loginAttempts >= maxAttempts)
+                    {
+                        Console.WriteLine("[Error] 密码错误次数过多，登录失败");
+                        success = false;
+                        break;
+                    }
+                }
+            }
         }
 
         if (!success)

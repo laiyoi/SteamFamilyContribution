@@ -337,17 +337,6 @@ public class SteamClientManager
         _steamId = callback.ClientSteamID;
         Console.WriteLine($"[SteamClient] SteamID: {_steamId}");
 
-        // 保存配置信息
-        if (!string.IsNullOrEmpty(_username))
-        {
-            var config = new SteamConfig
-            {
-                Username = _username
-            };
-            ConfigManager.SaveConfig(config);
-            Console.WriteLine("[Config] ✓ 配置已更新");
-        }
-
         // 停止回调循环
         _isRunning = false;
     }
@@ -418,9 +407,10 @@ public class SteamClientManager
     {
         try
         {
-            var tokenPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "access_token.txt");
-            File.WriteAllText(tokenPath, token);
-            Console.WriteLine($"[SteamClient] ✓ Access Token 已保存到：{tokenPath}");
+            var config = ConfigManager.LoadConfig() ?? new SteamConfig();
+            config.AccessToken = token;
+            ConfigManager.SaveConfig(config);
+            Console.WriteLine("[SteamClient] ✓ Access Token 已保存到配置文件");
         }
         catch (Exception ex)
         {
@@ -435,9 +425,10 @@ public class SteamClientManager
     {
         try
         {
-            var tokenPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "refresh_token.txt");
-            File.WriteAllText(tokenPath, token);
-            Console.WriteLine($"[SteamClient] ✓ Refresh Token 已保存到：{tokenPath}");
+            var config = ConfigManager.LoadConfig() ?? new SteamConfig();
+            config.RefreshToken = token;
+            ConfigManager.SaveConfig(config);
+            Console.WriteLine("[SteamClient] ✓ Refresh Token 已保存到配置文件");
         }
         catch (Exception ex)
         {
@@ -452,9 +443,10 @@ public class SteamClientManager
     {
         try
         {
-            var guardPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "guard_data.txt");
-            File.WriteAllText(guardPath, data);
-            Console.WriteLine($"[SteamClient] ✓ GuardData 已保存到：{guardPath}");
+            var config = ConfigManager.LoadConfig() ?? new SteamConfig();
+            config.GuardData = data;
+            ConfigManager.SaveConfig(config);
+            Console.WriteLine("[SteamClient] ✓ GuardData 已保存到配置文件");
         }
         catch (Exception ex)
         {
@@ -469,15 +461,11 @@ public class SteamClientManager
     {
         try
         {
-            var guardPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "guard_data.txt");
-            if (File.Exists(guardPath))
+            var config = ConfigManager.LoadConfig();
+            if (config != null && !string.IsNullOrEmpty(config.GuardData))
             {
-                var data = File.ReadAllText(guardPath);
-                if (!string.IsNullOrEmpty(data))
-                {
-                    Console.WriteLine($"[Config] ✓ 已从文件读取 GuardData");
-                    return data;
-                }
+                Console.WriteLine("[Config] ✓ 已从配置文件读取 GuardData");
+                return config.GuardData;
             }
         }
         catch (Exception ex)
@@ -509,15 +497,11 @@ public class SteamClientManager
     {
         try
         {
-            var tokenPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "access_token.txt");
-            if (File.Exists(tokenPath))
+            var config = ConfigManager.LoadConfig();
+            if (config != null && !string.IsNullOrEmpty(config.AccessToken))
             {
-                var token = File.ReadAllText(tokenPath);
-                if (!string.IsNullOrEmpty(token))
-                {
-                    Console.WriteLine($"[Config] ✓ 已从文件读取 Access Token");
-                    return token;
-                }
+                Console.WriteLine("[Config] ✓ 已从配置文件读取 Access Token");
+                return config.AccessToken;
             }
         }
         catch (Exception ex)
@@ -535,15 +519,11 @@ public class SteamClientManager
     {
         try
         {
-            var tokenPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "refresh_token.txt");
-            if (File.Exists(tokenPath))
+            var config = ConfigManager.LoadConfig();
+            if (config != null && !string.IsNullOrEmpty(config.RefreshToken))
             {
-                var token = File.ReadAllText(tokenPath);
-                if (!string.IsNullOrEmpty(token))
-                {
-                    Console.WriteLine($"[Config] ✓ 已从文件读取 Refresh Token");
-                    return token;
-                }
+                Console.WriteLine("[Config] ✓ 已从配置文件读取 Refresh Token");
+                return config.RefreshToken;
             }
         }
         catch (Exception ex)
@@ -561,9 +541,10 @@ public class SteamClientManager
     {
         try
         {
-            var usernamePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "username.txt");
-            File.WriteAllText(usernamePath, username);
-            Console.WriteLine($"[SteamClient] ✓ 用户名已保存到：{usernamePath}");
+            var config = ConfigManager.LoadConfig() ?? new SteamConfig();
+            config.Username = username;
+            ConfigManager.SaveConfig(config);
+            Console.WriteLine("[SteamClient] ✓ 用户名已保存到配置文件");
         }
         catch (Exception ex)
         {
@@ -578,15 +559,11 @@ public class SteamClientManager
     {
         try
         {
-            var usernamePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "username.txt");
-            if (File.Exists(usernamePath))
+            var config = ConfigManager.LoadConfig();
+            if (config != null && !string.IsNullOrEmpty(config.Username))
             {
-                var username = File.ReadAllText(usernamePath);
-                if (!string.IsNullOrEmpty(username))
-                {
-                    Console.WriteLine($"[Config] ✓ 已从文件读取用户名：{username}");
-                    return username;
-                }
+                Console.WriteLine($"[Config] ✓ 已从配置文件读取用户名：{config.Username}");
+                return config.Username;
             }
         }
         catch (Exception ex)

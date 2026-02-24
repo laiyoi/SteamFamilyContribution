@@ -3,6 +3,25 @@ using SteamKit2.Internal;
 
 namespace SteamContribution;
 
+// 家庭成员信息类
+public class FamilyMember
+{
+    public ulong SteamId { get; set; }
+    public uint Role { get; set; }
+    public uint TimeJoined { get; set; }
+    public uint CooldownSecondsRemaining { get; set; }
+    public string? Nickname { get; set; } // 昵称
+    public string? AvatarUrl { get; set; } // 头像 URL
+    
+    public string RoleName => Role switch
+    {
+        0 => "Unknown",
+        1 => "Adult",
+        2 => "Child",
+        _ => $"Unknown({Role})"
+    };
+}
+
 public class FamilyService
 {
     private readonly SteamClientManager _clientManager;

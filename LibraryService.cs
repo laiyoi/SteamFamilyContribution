@@ -6,6 +6,15 @@ using System.Text.Json.Serialization;
 
 namespace SteamContribution;
 
+// 共享游戏信息类
+public class SharedApp
+{
+    public uint AppId { get; set; }
+    public ulong OwnerId { get; set; }
+    public string Name { get; set; } = "";
+    public List<ulong> OwnerSteamIds { get; set; } = new List<ulong>();
+}
+
 public class LibraryService
 {
     private readonly SteamClientManager _clientManager;

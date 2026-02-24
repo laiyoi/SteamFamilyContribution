@@ -35,7 +35,7 @@ jobs:
         New-Item -ItemType Directory -Path ./release
         Copy-Item -Path ./publish/* -Destination ./release/ -Recurse
         Copy-Item -Path ./README.md -Destination ./release/
-        Compress-Archive -Path ./release/* -DestinationPath ./SteamContribution.zip
+        Compress-Archive -Path ./release/* -DestinationPath ./SteamFamilyContribution.zip
 
     - name: Extract tag name
       id: extract_tag
@@ -49,4 +49,4 @@ jobs:
         name: Release ${{ steps.extract_tag.outputs.tag }}
         draft: false
         prerelease: false
-        files: ./SteamContribution.zip
+        files: ./SteamFamilyContribution.zip

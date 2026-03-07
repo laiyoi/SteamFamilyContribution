@@ -1,0 +1,326 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+        x:Class="SteamContribution.MainWindow"
+        xmlns:vm="clr-namespace:SteamContribution"
+        Title="Steam 家庭库贡献率查询工具"
+        Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen"
+        Classes="modern-window">
+    
+    <Window.Resources>
+    </Window.Resources>
+    
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+    
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 顶部工具栏 -->
+        <Border Grid.Row="0" Classes="toolbar">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Steam 家庭库贡献率查询" 
+                               Classes="title-text"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <Button Classes="toolbar-button" 
+                            Command="{Binding AnalyzeResultCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Data="M19,9H13V3H11V9H5L12,16L19,9M5,20V22H19V20H5Z" 
+                                      Width="16" Height="16"/>
+                            <TextBlock Text="分析历史结果"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- 主内容区域 -->
+        <ScrollViewer Grid.Row="1">
+            <Grid RowDefinitions="Auto,Auto,*" Margin="20">
+                <!-- 登录选项卡 -->
+                <TabControl Grid.Row="0" Classes="modern-tab">
+                    <TabItem Header="登录设置">
+                        <Border Classes="card" Margin="10">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="20">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="登录方式：" 
+                                           Classes="label-text" Margin="0,0,20,10"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" 
+                                          SelectedIndex="{Binding SelectedLoginIndex}"
+                                          Margin="0,0,0,20">
+                                    <ComboBoxItem Content="用户名密码登录"/>
+                                    <ComboBoxItem Content="使用已保存的 Access Token"/>
+                                    <ComboBoxItem Content="扫码登录"/>
+                                </ComboBox>
+                                
+                                <!-- 用户名密码登录 -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                            IsVisible="{Binding IsUsernamePasswordVisible}"
+                                            Spacing="10">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0" Text="用户名：" 
+                                                   Classes="label-text" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" Text="{Binding Username}" 
+                                                 Watermark="请输入 Steam 用户名" Margin="10,0"/>
+                                        <Button Grid.Column="2" Content="读取保存" 
+                                                Command="{Binding LoadCredentialsCommand}"
+                                                Classes="secondary-button"/>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0" Text="密码：" 
+                                                   Classes="label-text" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" Text="{Binding Password}" 
+                                                 Watermark="请输入 Steam 密码"
+                                                 PasswordChar="*" Margin="10,0"/>
+                                        <Button Grid.Column="2" Content="读取保存" 
+                                                Command="{Binding LoadCredentialsCommand}"
+                                                Classes="secondary-button"/>
+                                    </Grid>
+                                </StackPanel>
+                                
+                                <!-- Token 登录提示 -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                            IsVisible="{Binding IsTokenLoginVisible}"
+                                            Spacing="10">
+                                    <TextBlock Text="将使用已保存的 Access Token 和 Refresh Token 自动登录"
+                                               Classes="info-text"/>
+                                </StackPanel>
+                                
+                                <!-- 扫码登录提示 -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                            IsVisible="{Binding IsQrLoginVisible}"
+                                            Spacing="10">
+                                    <TextBlock Text="请使用 Steam 手机应用扫描二维码进行登录"
+                                               Classes="info-text"/>
+                                    <Image Source="{Binding QRCodeImage}" 
+                                           MaxWidth="300" MaxHeight="300"
+                                           HorizontalAlignment="Center"
+                                           IsVisible="{Binding IsQRCodeVisible}"/>
+                                    <Button Content="刷新二维码" 
+                                            Command="{Binding RefreshQRCodeCommand}"
+                                            IsVisible="{Binding IsQRCodeVisible}"/>
+                                </StackPanel>
+                                
+                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                                        Content="开始登录" 
+                                        Command="{Binding LoginCommand}"
+                                        Classes="primary-button"
+                                        HorizontalAlignment="Left"
+                                        Padding="30,10"
+                                        Margin="0,20,0,0"/>
+                                
+                                <!-- 查询按钮（登录后显示） -->
+                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                                        Content="开始查询家庭组" 
+                                        Command="{Binding StartQueryCommand}"
+                                        Classes="primary-button"
+                                        HorizontalAlignment="Left"
+                                        Padding="30,10"
+                                        Margin="0,20,0,0"
+                                        IsVisible="{Binding CanStartQuery}"/>
+                                
+                                <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
+                                           Text="{Binding LoginStatus}" 
+                                           Classes="status-text"
+                                           Margin="0,10,0,0"/>
+                            </Grid>
+                        </Border>
+                    </TabItem>
+                    
+                    <TabItem Header="查询设置">
+                        <Border Classes="card" Margin="10">
+                            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="20">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="国家/地区：" 
+                                           Classes="label-text" Margin="0,0,20,10"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" 
+                                          SelectedItem="{Binding SelectedCountry}"
+                                          ItemsSource="{Binding CountryList}"
+                                          Margin="0,0,0,20"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="显示选项：" 
+                                           Classes="label-text" Margin="0,0,20,10"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Spacing="10">
+                                    <CheckBox Content="显示去重版本贡献" 
+                                              IsChecked="{Binding ShowUniqueContribution}"/>
+                                    <CheckBox Content="保存查询结果" 
+                                              IsChecked="{Binding SaveResult}"/>
+                                </StackPanel>
+                                
+                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                                        Content="开始查询家庭组" 
+                                        Command="{Binding QueryFamilyCommand}"
+                                        Classes="primary-button"
+                                        HorizontalAlignment="Left"
+                                        Padding="30,10"
+                                        Margin="0,20,0,0"/>
+                            </Grid>
+                        </Border>
+                    </TabItem>
+                </TabControl>
+                
+                <!-- 进度和日志 -->
+                <Border Grid.Row="1" Classes="card" Margin="10,20,10,10" IsVisible="{Binding IsProcessing}">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Text="处理中..." Classes="section-title" Margin="20,20,20,10"/>
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+                            <TextBlock Text="{Binding LogOutput}" 
+                                       Classes="log-text" 
+                                       Margin="20,0,20,20"
+                                       TextWrapping="Wrap"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+                
+                <!-- 结果显示 -->
+                <Border Grid.Row="2" Classes="card" Margin="10,20,10,10" IsVisible="{Binding IsResultVisible}">
+                    <Grid RowDefinitions="Auto,Auto,Auto,*">
+                        <TextBlock Text="查询结果" Classes="section-title" Margin="20,20,20,10"/>
+                        
+                        <!-- 汇总信息 -->
+                        <Border Grid.Row="1" Classes="summary-card" Margin="20,0,20,15">
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto">
+                                <!-- 第一行：四个卡片 -->
+                                <Border Grid.Column="0" Classes="summary-card" Margin="5">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="5">
+                                        <TextBlock Text="共享库总价值" Classes="summary-label" FontSize="12"/>
+                                        <TextBlock Text="{Binding TotalContributionText}" 
+                                                   Classes="summary-value" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Classes="summary-card" Margin="5">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="5">
+                                        <TextBlock Text="去重后价值" Classes="summary-label" FontSize="12"/>
+                                        <TextBlock Text="{Binding TotalUniqueContributionText}" 
+                                                   Classes="summary-value" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Classes="summary-card" Margin="5">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="5">
+                                        <TextBlock Text="共享游戏" Classes="summary-label" FontSize="12"/>
+                                        <TextBlock Text="{Binding TotalGameCountText}" 
+                                                   Classes="summary-value" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="3" Classes="summary-card" Margin="5">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="5">
+                                        <TextBlock Text="家庭成员" Classes="summary-label" FontSize="12"/>
+                                        <TextBlock Text="{Binding MemberCountText}" 
+                                                   Classes="summary-value" FontSize="20"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 图表展示区域 -->
+                        <Border Grid.Row="2" Classes="summary-card" Margin="20,0,20,15">
+                            <StackPanel Spacing="15">
+                                <!-- 标题和开关 -->
+                                <Grid>
+                                    <TextBlock Text="可视化图表" Classes="subsection-title" VerticalAlignment="Center"/>
+                                    
+                                    <!-- 去重模式切换开关 -->
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                                        <TextBlock Text="显示去重贡献" VerticalAlignment="Center" 
+                                                   Foreground="#a0a0a0" FontSize="13"/>
+                                        <ToggleSwitch IsChecked="{Binding ShowUniqueContribution}" 
+                                                      HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                                
+                                <!-- 图表 -->
+                                <Grid ColumnDefinitions="*,*">
+                                    <!-- 饼图 -->
+                                    <Border Grid.Column="0" 
+                                            Background="#0f3460"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            BorderBrush="#1a4a7a"
+                                            BorderThickness="1"
+                                            Margin="0,10">
+                                        <lvc:PieChart Series="{Binding ContributionPieChart.Series}" 
+                                                      Height="350"
+                                                      Background="Transparent"
+                                                      LegendPosition="Right"/>
+                                    </Border>
+                                    
+                                    <!-- 柱状图 -->
+                                    <Border Grid.Column="1" 
+                                            Background="#0f3460"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            BorderBrush="#1a4a7a"
+                                            BorderThickness="1"
+                                            Margin="0,10">
+                                        <lvc:CartesianChart Series="{Binding ContributionBarChart.Series}" 
+                                                            XAxes="{Binding ContributionBarChart.XAxes}"
+                                                            YAxes="{Binding ContributionBarChart.YAxes}"
+                                                            Height="350"
+                                                            Background="Transparent"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- 成员贡献列表 -->
+                        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="10" Margin="20,0,20,20">
+                                <TextBlock Text="成员贡献详情" Classes="subsection-title"/>
+                                <ItemsControl ItemsSource="{Binding MemberContributions}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:MemberContributionItem">
+                                            <Border Classes="member-card">
+                                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="15">
+                                                    <Border Grid.Column="0" 
+                                                            Classes="avatar"
+                                                            Width="60" Height="60">
+                                                        <Image Source="{Binding AvatarUrl}" 
+                                                               Stretch="UniformToFill"/>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" 
+                                                                Margin="15,0"
+                                                                VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Nickname}" 
+                                                                   Classes="member-name"/>
+                                                        <TextBlock Text="{Binding RoleName}" 
+                                                                   Classes="member-role"/>
+                                                        <TextBlock Text="{Binding GameCountText}" 
+                                                                   Classes="member-games"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2" 
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right">
+                                                        <TextBlock Text="{Binding ContributionText}" 
+                                                                   Classes="member-contribution"/>
+                                                        <TextBlock Text="{Binding ContributionRatioText}" 
+                                                                   Classes="member-ratio"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+        
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Classes="statusbar">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding StatusBarMessage}" 
+                           VerticalAlignment="Center" Margin="10,0"/>
+                <TextBlock Grid.Column="1" Text="Powered by SteamKit2 &amp; Avalonia" 
+                           Classes="footer-text" Margin="10,0"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

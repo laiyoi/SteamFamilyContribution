@@ -9,9 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-gui:
     runs-on: windows-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -19,23 +18,81 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 10.0.x
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./GUI/SteamContribution.csproj
 
-    - name: Build project
-      run: dotnet build --configuration Release --no-restore
+    - name: Build GUI version
+      run: dotnet build ./GUI/SteamContribution.csproj --configuration Release --no-restore
 
-    - name: Publish project
-      run: dotnet publish --configuration Release --output ./publish --no-build
+    - name: Publish GUI version
+      run: dotnet publish ./GUI/SteamContribution.csproj --configuration Release --output ./publish-gui --no-build
 
-    - name: Create release artifact
+    - name: Create GUI release artifact
       run: |
-        New-Item -ItemType Directory -Path ./release
-        Copy-Item -Path ./publish/* -Destination ./release/ -Recurse
-        Copy-Item -Path ./README.md -Destination ./release/
-        Compress-Archive -Path ./release/* -DestinationPath ./SteamFamilyContribution.zip
+        New-Item -ItemType Directory -Path ./release-gui
+        Copy-Item -Path ./publish-gui/* -Destination ./release-gui/ -Recurse
+        Copy-Item -Path ./README.md -Destination ./release-gui/
+        Compress-Archive -Path ./release-gui/* -DestinationPath ./SteamFamilyContribution-GUI.zip
+
+    - name: Upload GUI artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GUI-version
+        path: ./SteamFamilyContribution-GUI.zip
+
+  build-cui:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore ./CLI/SteamContribution.csproj
+
+    - name: Build CUI version
+      run: dotnet build ./CLI/SteamContribution.csproj --configuration Release --no-restore
+
+    - name: Publish CUI version
+      run: dotnet publish ./CLI/SteamContribution.csproj --configuration Release --output ./publish-cui --no-build
+
+    - name: Create CUI release artifact
+      run: |
+        New-Item -ItemType Directory -Path ./release-cui
+        Copy-Item -Path ./publish-cui/* -Destination ./release-cui/ -Recurse
+        Copy-Item -Path ./README.md -Destination ./release-cui/
+        Compress-Archive -Path ./release-cui/* -DestinationPath ./SteamFamilyContribution-CUI.zip
+
+    - name: Upload CUI artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: CUI-version
+        path: ./SteamFamilyContribution-CUI.zip
+
+  create-release:
+    needs: [build-gui, build-cui]
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download GUI artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: GUI-version
+        path: ./artifacts
+
+    - name: Download CUI artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: CUI-version
+        path: ./artifacts
 
     - name: Extract tag name
       id: extract_tag
@@ -49,4 +106,6 @@ jobs:
         name: Release ${{ steps.extract_tag.outputs.tag }}
         draft: false
         prerelease: false
-        files: ./SteamFamilyContribution.zip
+        files: |
+          ./artifacts/SteamFamilyContribution-GUI.zip
+          ./artifacts/SteamFamilyContribution-CUI.zip

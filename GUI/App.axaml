@@ -6,4 +6,7 @@
         <FluentTheme />
         <StyleInclude Source="avares://SteamContribution/Styles.axaml" />
     </Application.Styles>
+    <Application.Resources>
+        <FontFamily x:Key="DefaultFont">Microsoft YaHei,SimSun,Segoe UI,Arial</FontFamily>
+    </Application.Resources>
 </Application>

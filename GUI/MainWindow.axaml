@@ -3,6 +3,7 @@
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
         x:Class="SteamContribution.MainWindow"
         xmlns:vm="clr-namespace:SteamContribution"
+        xmlns:converters="clr-namespace:SteamContribution"
         Title="Steam 家庭库贡献率查询工具"
         Width="1200" Height="800"
         WindowStartupLocation="CenterScreen"
@@ -246,7 +247,6 @@
                                             Margin="0,10">
                                         <lvc:PieChart Series="{Binding ContributionPieChart.Series}" 
                                                       Height="350"
-                                                      Background="Transparent"
                                                       LegendPosition="Right"/>
                                     </Border>
                                     
@@ -269,49 +269,158 @@
                         </Border>
                         
                         <!-- 成员贡献列表 -->
-                        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto">
-                            <StackPanel Spacing="10" Margin="20,0,20,20">
-                                <TextBlock Text="成员贡献详情" Classes="subsection-title"/>
-                                <ItemsControl ItemsSource="{Binding MemberContributions}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:MemberContributionItem">
-                                            <Border Classes="member-card">
-                                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="15">
-                                                    <Border Grid.Column="0" 
-                                                            Classes="avatar"
-                                                            Width="60" Height="60">
-                                                        <Image Source="{Binding AvatarUrl}" 
-                                                               Stretch="UniformToFill"/>
-                                                    </Border>
-                                                    <StackPanel Grid.Column="1" 
-                                                                Margin="15,0"
-                                                                VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Nickname}" 
-                                                                   Classes="member-name"/>
-                                                        <TextBlock Text="{Binding RoleName}" 
-                                                                   Classes="member-role"/>
-                                                        <TextBlock Text="{Binding GameCountText}" 
-                                                                   Classes="member-games"/>
-                                                    </StackPanel>
-                                                    <StackPanel Grid.Column="2" 
-                                                                VerticalAlignment="Center"
-                                                                HorizontalAlignment="Right">
-                                                        <TextBlock Text="{Binding ContributionText}" 
-                                                                   Classes="member-contribution"/>
-                                                        <TextBlock Text="{Binding ContributionRatioText}" 
-                                                                   Classes="member-ratio"/>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </ScrollViewer>
+                        <Grid Grid.Row="3" RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="成员贡献详情（点击查看详情）" Classes="subsection-title" Margin="20,0,20,10"/>
+                            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+                                <StackPanel Spacing="10" Margin="20,0,20,20">
+                                    <ItemsControl ItemsSource="{Binding MemberContributions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:MemberContributionItem">
+                                                <Border Classes="member-card" 
+                                                        PointerPressed="OnMemberCardPressed">
+                                                    <Border.Styles>
+                                                        <Style Selector="Border.member-card">
+                                                            <Setter Property="Background" Value="#252535"/>
+                                                            <Setter Property="CornerRadius" Value="8"/>
+                                                            <Setter Property="Padding" Value="0"/>
+                                                            <Setter Property="Margin" Value="0,0,0,8"/>
+                                                        </Style>
+                                                        <Style Selector="Border.member-card:pointerover">
+                                                            <Setter Property="Background" Value="#353545"/>
+                                                        </Style>
+                                                    </Border.Styles>
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="15">
+                                                        <Border Grid.Column="0" 
+                                                                Classes="avatar"
+                                                                Width="60" Height="60">
+                                                            <Border.Background>
+                                                                <ImageBrush Source="{Binding AvatarBitmap}" 
+                                                                            Stretch="UniformToFill"/>
+                                                            </Border.Background>
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" 
+                                                                    Margin="15,0"
+                                                                    VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Nickname}" 
+                                                                       Classes="member-name"/>
+                                                            <TextBlock Text="{Binding RoleName}" 
+                                                                       Classes="member-role"/>
+                                                            <TextBlock Text="{Binding GameCountText}" 
+                                                                       Classes="member-games"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="2" 
+                                                                    VerticalAlignment="Center"
+                                                                    HorizontalAlignment="Right">
+                                                            <TextBlock Text="{Binding ContributionText}" 
+                                                                       Classes="member-contribution"/>
+                                                            <TextBlock Text="{Binding ContributionRatioText}" 
+                                                                       Classes="member-ratio"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
                     </Grid>
                 </Border>
             </Grid>
         </ScrollViewer>
+        
+        <!-- 成员游戏详情面板 -->
+        <Border Grid.Row="1" 
+                Classes="game-detail-panel"
+                IsVisible="{Binding IsGameDetailVisible}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Margin="0">
+            <Border.Styles>
+                <Style Selector="Border.game-detail-panel">
+                    <Setter Property="Background" Value="#1E1E2E"/>
+                    <Setter Property="Width" Value="400"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="BoxShadow" Value="-4 0 20 0 #60000000"/>
+                </Style>
+            </Border.Styles>
+            <Grid RowDefinitions="Auto,*,Auto">
+                <Border Grid.Row="0" Background="#252535" Padding="20,15">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="5">
+                            <TextBlock Text="{Binding SelectedMember.Nickname, StringFormat='{}{0} 的游戏'}" 
+                                       Classes="section-title" FontSize="18"/>
+                            <TextBlock Text="{Binding MemberGames.Count, StringFormat='共 {0} 款游戏'}" 
+                                       Foreground="#a0a0a0" FontSize="13"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" 
+                                Content="✕"
+                                Command="{Binding SelectMemberCommand}"
+                                CommandParameter="{x:Null}"
+                                Background="Transparent"
+                                Foreground="#a0a0a0"
+                                FontSize="18"
+                                Padding="10,5"/>
+                    </Grid>
+                </Border>
+                
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding MemberGames}" Margin="10">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:GameItem">
+                                <Border Classes="game-card" Margin="0,0,0,10">
+                                    <Border.Styles>
+                                        <Style Selector="Border.game-card">
+                                            <Setter Property="Background" Value="#252535"/>
+                                            <Setter Property="CornerRadius" Value="8"/>
+                                            <Setter Property="Padding" Value="10"/>
+                                        </Style>
+                                    </Border.Styles>
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Border Grid.Column="0" 
+                                                Width="180" Height="67" 
+                                                CornerRadius="4"
+                                                ClipToBounds="True">
+                                            <Panel>
+                                                <Image Source="{Binding ImageBitmap}" 
+                                                       Stretch="UniformToFill"/>
+                                                <Border Background="#30000000" 
+                                                        IsVisible="{Binding IsImageLoading}">
+                                                    <TextBlock Text="加载中..." 
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="#a0a0a0"/>
+                                                </Border>
+                                            </Panel>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="4">
+                                            <TextBlock Text="{Binding Name}" 
+                                                       Foreground="White" 
+                                                       FontSize="14"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       MaxLines="2"/>
+                                            <TextBlock Text="{Binding PriceText}" 
+                                                       Foreground="#4CAF50" 
+                                                       FontSize="13"/>
+                                            <TextBlock Text="{Binding AppId, StringFormat='AppID: {0}'}" 
+                                                       Foreground="#606060" 
+                                                       FontSize="11"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                
+                <Border Grid.Row="2" Background="#252535" Padding="15,10">
+                    <TextBlock Text="点击游戏封面可在 Steam 商店查看" 
+                               Foreground="#606060" 
+                               FontSize="12"
+                               HorizontalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </Border>
         
         <!-- 底部状态栏 -->
         <Border Grid.Row="2" Classes="statusbar">

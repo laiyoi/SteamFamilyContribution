@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
 
 namespace SteamContribution;
@@ -11,6 +11,9 @@ class Program
         try
         {
             Logger.Initialize();
+            
+            // 初始化字体
+            FontHelper.InitializeFonts();
             
             Logger.Info("========================================");
             Logger.Info("=== Steam 家庭库贡献率查询工具 (GUI 版本) ===");
@@ -54,7 +57,7 @@ class Program
             Logger.Info("========================================");
             
             Console.WriteLine($"\n错误已记录到日志文件");
-            Console.WriteLine($"错误类型：{ex.GetType().Name}");
+            Console.WriteLine($"错误类型：{ex.GetType().Name}"); 
             Console.WriteLine($"错误信息：{ex.Message}");
             Console.WriteLine("\n按 Enter 键退出...");
             Console.ReadLine();

@@ -1,6 +1,11 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace SteamContribution;
 
@@ -8,46 +13,32 @@ public partial class App : Application
 {
     public override void Initialize()
     {
-        Logger.Info("[App] 开始初始化...");
         try
         {
+            LiveCharts.Configure(config => config.HasGlobalSKTypeface(SKFontManager.Default.MatchCharacter('汉')));
             AvaloniaXamlLoader.Load(this);
-            Logger.Info("[App] ✓ 初始化完成");
         }
         catch (Exception ex)
         {
-            Logger.Error("[App] 初始化失败", ex);
+            System.Diagnostics.Debug.WriteLine($"[App] 初始化失败：{ex.Message}");
             throw;
         }
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        Logger.Info("[App] 框架初始化完成事件触发");
         try
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Logger.Debug("[App] 检测到桌面应用生命周期");
-                Logger.Debug("[App] 正在创建主窗口...");
-                
-                var mainWindow = new MainWindow();
-                Logger.Debug("[App] ✓ 主窗口创建成功");
-                
-                desktop.MainWindow = mainWindow;
-                Logger.Debug("[App] ✓ 主窗口已设置");
-            }
-            else
-            {
-                Logger.Warning($"[App] 未知的生命周期类型：{ApplicationLifetime?.GetType().Name}");
+                desktop.MainWindow = new MainWindow();
             }
 
             base.OnFrameworkInitializationCompleted();
-            Logger.Info("[App] ✓ 框架初始化完成");
         }
         catch (Exception ex)
         {
-            Logger.Error("[App] 框架初始化失败", ex);
+            System.Diagnostics.Debug.WriteLine($"[App] 框架初始化失败：{ex.Message}");
             throw;
         }
     }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 
 namespace SteamContribution;
@@ -45,6 +46,14 @@ public partial class MainWindow : Window
         {
             Logger.Error("[MainWindow] XAML 加载失败", ex);
             throw;
+        }
+    }
+    
+    private void OnMemberCardPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is Border border && border.DataContext is MemberContributionItem member)
+        {
+            _viewModel.SelectMemberCommand(member);
         }
     }
 }

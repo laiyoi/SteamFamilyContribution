@@ -6,11 +6,10 @@ public class SteamConfig
 {
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
-    public string CountryCode { get; set; } = "CN"; // 默认国家代码为中国
+    public string CountryCode { get; set; } = "CN";
     public string AccessToken { get; set; } = "";
     public string RefreshToken { get; set; } = "";
     public string GuardData { get; set; } = "";
-    // 注意：AuthCode 和 TwoFactorCode 是一次性验证码，不应保存到配置文件
 }
 
 public class ConfigManager
@@ -20,52 +19,37 @@ public class ConfigManager
         "steam_config.json"
     );
     
-    // 使用锁避免并发写入
     private static readonly object _configLock = new object();
 
-    /// <summary>
-    /// 读取配置文件
-    /// </summary>
     public static SteamConfig? LoadConfig()
     {
         lock (_configLock)
         {
             if (!File.Exists(ConfigPath))
-            {
-                return new SteamConfig(); // 返回新对象而不是 null
-            }
+                return new SteamConfig();
 
             try
             {
                 var json = File.ReadAllText(ConfigPath);
-                var config = JsonSerializer.Deserialize<SteamConfig>(json);
-                
-                // 直接返回配置对象，不要检查默认值
-                return config ?? new SteamConfig();
+                return JsonSerializer.Deserialize<SteamConfig>(json) ?? new SteamConfig();
             }
             catch (Exception ex)
             {
                 Logger.Info($"[Config] ✗ 读取配置文件失败：{ex.Message}");
-                return new SteamConfig(); // 返回新对象
+                return new SteamConfig();
             }
         }
     }
 
-    /// <summary>
-    /// 保存配置文件
-    /// </summary>
     public static void SaveConfig(SteamConfig config)
     {
         lock (_configLock)
         {
             try
             {
-                // 确保配置文件所在目录存在
                 var configDir = Path.GetDirectoryName(ConfigPath);
                 if (!string.IsNullOrEmpty(configDir) && !Directory.Exists(configDir))
-                {
                     Directory.CreateDirectory(configDir);
-                }
 
                 var options = new JsonSerializerOptions
                 {
@@ -83,28 +67,5 @@ public class ConfigManager
         }
     }
 
-    /// <summary>
-    /// 检查配置文件是否存在
-    /// </summary>
-    public static bool ConfigExists()
-    {
-        return File.Exists(ConfigPath);
-    }
-
-    /// <summary>
-    /// 创建示例配置文件
-    /// </summary>
-    public static void CreateSampleConfig()
-    {
-        var config = new SteamConfig
-        {
-            Username = "your_steam_username",
-            Password = "your_steam_password",
-            CountryCode = "CN"
-        };
-
-        SaveConfig(config);
-        
-        Logger.Info("配置文件已创建，请编辑 steam_config.json 文件填入您的 Steam 账号信息");
-    }
+    public static bool ConfigExists() => File.Exists(ConfigPath);
 }

@@ -1,17 +1,49 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
+    <!-- 核心颜色资源 -->
+    <Styles.Resources>
+        <SolidColorBrush x:Key="PrimaryColor" Color="#e94560"/>
+        <SolidColorBrush x:Key="PrimaryHoverColor" Color="#ff6b81"/>
+        <SolidColorBrush x:Key="PrimaryPressedColor" Color="#c73e54"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#1a1a2e"/>
+        <SolidColorBrush x:Key="SurfaceColor" Color="#16213e"/>
+        <SolidColorBrush x:Key="CardColor" Color="#0f3460"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#1a4a7a"/>
+        <SolidColorBrush x:Key="TextColor" Color="#ffffff"/>
+        <SolidColorBrush x:Key="TextMutedColor" Color="#a0a0a0"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#4caf50"/>
+        <SolidColorBrush x:Key="InfoColor" Color="#64b5f6"/>
+    </Styles.Resources>
+    
+    <!-- 全局字体设置 -->
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="Microsoft YaHei,SimSun,Segoe UI,Arial"/>
+    </Style>
+    <Style Selector="Button">
+        <Setter Property="FontFamily" Value="Microsoft YaHei,SimSun,Segoe UI,Arial"/>
+    </Style>
+    <Style Selector="TextBox">
+        <Setter Property="FontFamily" Value="Microsoft YaHei,SimSun,Segoe UI,Arial"/>
+    </Style>
+    <Style Selector="ComboBox">
+        <Setter Property="FontFamily" Value="Microsoft YaHei,SimSun,Segoe UI,Arial"/>
+    </Style>
+    <Style Selector="TabItem">
+        <Setter Property="FontFamily" Value="Microsoft YaHei,SimSun,Segoe UI,Arial"/>
+    </Style>
+    
     <!-- 主窗口样式 -->
     <Style Selector="Window.modern-window">
-        <Setter Property="Background" Value="#1a1a2e"/>
+        <Setter Property="Background" Value="{DynamicResource BackgroundColor}"/>
         <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
     </Style>
     
     <!-- 工具栏样式 -->
     <Style Selector="Border.toolbar">
-        <Setter Property="Background" Value="#16213e"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceColor}"/>
         <Setter Property="Padding" Value="20,15"/>
-        <Setter Property="BorderBrush" Value="#0f3460"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
     </Style>
     
@@ -19,33 +51,33 @@
     <Style Selector="TextBlock.title-text">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="#e94560"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
     </Style>
     
     <!-- 卡片样式 -->
     <Style Selector="Border.card">
-        <Setter Property="Background" Value="#16213e"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceColor}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="15"/>
-        <Setter Property="BorderBrush" Value="#0f3460"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
     
     <!-- 标签文字样式 -->
     <Style Selector="TextBlock.label-text">
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
     
     <!-- 信息文字样式 -->
     <Style Selector="TextBlock.info-text">
-        <Setter Property="Foreground" Value="#64b5f6"/>
+        <Setter Property="Foreground" Value="{DynamicResource InfoColor}"/>
         <Setter Property="FontStyle" Value="Italic"/>
     </Style>
     
     <!-- 状态文字样式 -->
     <Style Selector="TextBlock.status-text">
-        <Setter Property="Foreground" Value="#4caf50"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentColor}"/>
         <Setter Property="FontWeight" Value="Medium"/>
     </Style>
     
@@ -62,7 +94,7 @@
     <Style Selector="TextBlock.section-title">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="#e94560"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
         <Setter Property="Margin" Value="0,0,0,15"/>
     </Style>
     
@@ -70,12 +102,12 @@
     <Style Selector="TextBlock.subsection-title">
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="Medium"/>
-        <Setter Property="Foreground" Value="#ffffff"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
     </Style>
     
     <!-- 主按钮样式 -->
     <Style Selector="Button.primary-button">
-        <Setter Property="Background" Value="#e94560"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="CornerRadius" Value="6"/>
@@ -85,32 +117,32 @@
     </Style>
     
     <Style Selector="Button.primary-button:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#ff6b81"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryHoverColor}"/>
     </Style>
     
     <Style Selector="Button.primary-button:pressed /template/ ContentPresenter">
-        <Setter Property="Background" Value="#c73e54"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryPressedColor}"/>
     </Style>
     
     <!-- 次要按钮样式 -->
     <Style Selector="Button.secondary-button">
-        <Setter Property="Background" Value="#0f3460"/>
+        <Setter Property="Background" Value="{DynamicResource CardColor}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="#1a4a7a"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Padding" Value="15,8"/>
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     
     <Style Selector="Button.secondary-button:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#1a4a7a"/>
+        <Setter Property="Background" Value="{DynamicResource BorderColor}"/>
     </Style>
     
     <!-- 工具栏按钮样式 -->
     <Style Selector="Button.toolbar-button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="10,8"/>
         <Setter Property="CornerRadius" Value="4"/>
@@ -118,7 +150,7 @@
     </Style>
     
     <Style Selector="Button.toolbar-button:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="#0f3460"/>
+        <Setter Property="Background" Value="{DynamicResource CardColor}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
     
@@ -128,36 +160,31 @@
     </Style>
     
     <Style Selector="TabItem">
-        <Setter Property="Background" Value="#0f3460"/>
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Background" Value="{DynamicResource CardColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="Padding" Value="20,10"/>
         <Setter Property="Margin" Value="0,0,5,0"/>
         <Setter Property="CornerRadius" Value="4,4,0,0"/>
     </Style>
     
     <Style Selector="TabItem:selected">
-        <Setter Property="Background" Value="#16213e"/>
-        <Setter Property="Foreground" Value="#e94560"/>
-    </Style>
-    
-    <!-- 摘要网格样式 -->
-    <Style Selector="Grid.summary-grid">
-        <Setter Property="Margin" Value="0,0,0,15"/>
+        <Setter Property="Background" Value="{DynamicResource SurfaceColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
     </Style>
     
     <!-- 摘要卡片样式 -->
     <Style Selector="Border.summary-card">
-        <Setter Property="Background" Value="#0f3460"/>
+        <Setter Property="Background" Value="{DynamicResource CardColor}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="20"/>
-        <Setter Property="BorderBrush" Value="#1a4a7a"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
     
     <!-- 摘要标签样式 -->
     <Style Selector="TextBlock.summary-label">
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
     
@@ -165,28 +192,28 @@
     <Style Selector="TextBlock.summary-value">
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Foreground" Value="#e94560"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="0,5,0,0"/>
     </Style>
     
     <!-- 成员卡片样式 -->
     <Style Selector="Border.member-card">
-        <Setter Property="Background" Value="#0f3460"/>
+        <Setter Property="Background" Value="{DynamicResource CardColor}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Margin" Value="0,5"/>
-        <Setter Property="BorderBrush" Value="#1a4a7a"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
     
     <Style Selector="Border.member-card:pointerover">
-        <Setter Property="Background" Value="#1a4a7a"/>
+        <Setter Property="Background" Value="{DynamicResource BorderColor}"/>
     </Style>
     
     <!-- 头像样式 -->
     <Style Selector="Border.avatar">
         <Setter Property="CornerRadius" Value="30"/>
-        <Setter Property="BorderBrush" Value="#e94560"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="ClipToBounds" Value="True"/>
     </Style>
@@ -195,20 +222,20 @@
     <Style Selector="TextBlock.member-name">
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
     </Style>
     
     <!-- 成员角色样式 -->
     <Style Selector="TextBlock.member-role">
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="Margin" Value="0,3,0,0"/>
     </Style>
     
     <!-- 成员游戏数样式 -->
     <Style Selector="TextBlock.member-games">
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Foreground" Value="#64b5f6"/>
+        <Setter Property="Foreground" Value="{DynamicResource InfoColor}"/>
         <Setter Property="Margin" Value="0,3,0,0"/>
     </Style>
     
@@ -216,13 +243,13 @@
     <Style Selector="TextBlock.member-contribution">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Foreground" Value="#4caf50"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentColor}"/>
     </Style>
     
     <!-- 成员比率样式 -->
     <Style Selector="TextBlock.member-ratio">
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Foreground" Value="#a0a0a0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
         <Setter Property="Margin" Value="0,3,0,0"/>
     </Style>
     
@@ -230,7 +257,7 @@
     <Style Selector="Border.statusbar">
         <Setter Property="Background" Value="#0d1117"/>
         <Setter Property="Padding" Value="15,10"/>
-        <Setter Property="BorderBrush" Value="#0f3460"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardColor}"/>
         <Setter Property="BorderThickness" Value="0,1,0,0"/>
     </Style>
     
@@ -243,8 +270,8 @@
     <!-- 文本框样式 -->
     <Style Selector="TextBox">
         <Setter Property="Background" Value="#0d1117"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#0f3460"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Padding" Value="10,8"/>
@@ -252,14 +279,14 @@
     </Style>
     
     <Style Selector="TextBox:focus /template/ Border">
-        <Setter Property="BorderBrush" Value="#e94560"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
     </Style>
     
     <!-- 组合框样式 -->
     <Style Selector="ComboBox">
         <Setter Property="Background" Value="#0d1117"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#0f3460"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Padding" Value="10,8"/>
@@ -267,7 +294,7 @@
     
     <!-- 复选框样式 -->
     <Style Selector="CheckBox">
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
     </Style>
     
     <!-- 滚动条样式 -->
